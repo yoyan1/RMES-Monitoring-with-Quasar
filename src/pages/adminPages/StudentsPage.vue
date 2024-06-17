@@ -8,7 +8,7 @@
         <div class="text-h6">All Students: {{ students.length }}</div>
         
       </q-card-section>
-      <q-table :rows="students" :columns="columns" row-key="LRN" :filter="search" loading v-model:selected="selected">
+      <q-table :rows="students" :columns="columns" row-key="LRN" :filter="search" :loading="loading" v-model:selected="selected">
         <template v-slot:top>
           <div class="fit row wrap justify-between items-center">
             <div class="" style=" min-width: 50%; max-width: 50%;">
@@ -34,20 +34,20 @@
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ props.row.name }}</q-item-label>
+                  <q-item-label>{{ props.row.fullname }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-td>
             <q-td key="LRN" :props="props">
-              {{ props.row.LRN }}
+              {{ props.row.lrn }}
             </q-td>
             <q-td key="level" :props="props">
               <q-badge color="blue-3 text-dark" class="">
-                {{ props.row.level }}
+                Grade {{ props.row.level }}
               </q-badge>
             </q-td>
             <q-td key="age" :props="props">
-              {{ props.row.age }}
+              {{ calculateAge(props.row.date_of_birth) }}
             </q-td>
             <q-td key="gender" :props="props">
               {{ props.row.gender }}
@@ -71,18 +71,29 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {onBeforeMount, ref} from 'vue'
 import PrevieStudentsVue from 'src/components/PrevieStudents.vue'
+import { collection, getDocs } from "firebase/firestore"; 
+import { db } from 'src/config/firebase';
+
+const loading = ref(false)
+const students = ref([])
+
+onBeforeMount(async ()=> {
+  loading.value = true
+  try{
+    const querySnapshot = await getDocs(collection(db, "students"));
+    querySnapshot.forEach((doc) => {
+      students.value.push(doc.data())
+    });
+    loading.value = false
+  } catch(err){
+
+  }
+})
 
 const  search = ref('')
 const selected= ref([])
-const students = ref([
-  { name: 'Jaylord Sison', LRN: '273642837459', level: 'Grade II', age: 11, gender: 'male', status: 'Present' },
-  { name: 'Christopher Ian Mag-aso', LRN: '213517232893', level: 'Grade III', age: 11, gender: 'male', status: 'Present' },
-  { name: 'Jeryme Magline', LRN: '263847925346', level: 'Grade V', age: 11, gender: 'male', status: 'Out of school' },
-  { name: 'Roland Clarion', LRN: '637492735473', level: 'Grade V', age: 11, gender: 'male', status: 'Present' },
-  { name: 'Rosemarie Panilagao', LRN: '8172638453937', level: 'Grade V', age: 11, gender: 'female', status: 'Out of school' }
-])
 
 const columns = ref([
   { name: 'name', required: true, label: 'Name', align: 'left', field: row => row.name },
@@ -93,6 +104,18 @@ const columns = ref([
   { name: 'status', align: 'left', label: 'Status', field: 'status' },
   { name: 'action', align: 'center', label: 'Action', field: 'action' }
 ])
+
+function calculateAge(birthDate) {
+    var today = new Date();
+    var birthDate = new Date(birthDate);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+
 function  addStudent() {
       console.log('Add student clicked')
     }
