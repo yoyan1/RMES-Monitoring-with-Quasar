@@ -1,14 +1,14 @@
 <template>
-  <q-page>
-    <q-card class="bg-grey-2 q-pl-md q-pr-md">
+  <q-page class="bg-grey-2 q-pt-md q-pl-md q-pr-md">
+    <q-card>
       <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
       <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
       <q-dialog v-model="dialogDel" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
       <q-card-section >
-        <div class="text-h6">All Students: 4</div>
+        <div class="text-h6">All Students: {{ students.length }}</div>
         
       </q-card-section>
-      <q-table :rows="students" :columns="columns" row-key="LRN" :filter="search" >
+      <q-table :rows="students" :columns="columns" row-key="LRN" :filter="search" loading>
         <template v-slot:top>
           <div class="fit row wrap justify-between items-center">
             <div class="" style=" min-width: 50%; max-width: 50%;">
@@ -42,7 +42,7 @@
               {{ props.row.LRN }}
             </q-td>
             <q-td key="level" :props="props">
-              <q-badge color="blue">
+              <q-badge color="blue-3 text-dark" class="">
                 {{ props.row.level }}
               </q-badge>
             </q-td>
