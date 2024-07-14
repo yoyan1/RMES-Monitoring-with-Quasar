@@ -1,13 +1,9 @@
 <template>
     <q-page class="bg-grey-2 q-pt-md q-pl-md q-pr-md">
-      <q-card>
-        <q-card-section >
-          <div class="text-h6">Students Attendance</div>
-          
-        </q-card-section>
+      <q-card class="no-shadow">
             <q-table
             flat bordered
-            title="Treats"
+            title="Students Attendance"
             :rows="list"
             :columns="columns"
             color="primary"
@@ -65,7 +61,7 @@ onBeforeMount(async ()=> {
     { name: 'status', align: 'center', label: 'Status', field: 'status', sortable: true },
     { name: 'time_in', label: 'Time in', field: 'time_in', sortable: true },
     { name: 'time_out', label: 'Time out', field: 'time_out', sortable:true },
-    { name: 'date', label: 'date', field: 'date' },
+    { name: 'date', label: 'date', field: 'date', sortable:true },
   ]
   
   

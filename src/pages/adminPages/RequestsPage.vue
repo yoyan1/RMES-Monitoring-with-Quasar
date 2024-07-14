@@ -1,6 +1,6 @@
 <template>
     <q-page class="bg-grey-2 q-pt-md q-pl-md q-pr-md">
-      <q-card>
+      <q-card class="no-shadow">
         <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
         <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
         <q-dialog v-model="dialogDel" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
@@ -51,7 +51,7 @@
   
   <script setup>
   import {ref} from 'vue'
-  import PrevieStudentsVue from 'src/components/PrevieStudents.vue'
+  import PrevieStudentsVue from 'src/components/PreviewStudents.vue'
   
   const  search = ref('')
   const students = ref([

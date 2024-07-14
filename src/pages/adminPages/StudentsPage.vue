@@ -1,18 +1,17 @@
 <template>
-  <q-page class="bg-grey-2 q-pt-md q-pl-md q-pr-md">
-    <q-card>
-      <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
-      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
-      <q-dialog v-model="dialogDel" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
+  <q-page class="bg-grey-1 q-pt-md q-pl-md q-pr-md">
+    <q-card class="no-shadow">
+      <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue :student="student"/></q-dialog>
+      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)" full-width><add-or-update :student="student"/></q-dialog>
       <q-card-section >
         <div class="text-h6">All Students: {{ students.length }}</div>
         
       </q-card-section>
-      <q-table :rows="students" :columns="columns" row-key="LRN" :filter="search" :loading="loading" v-model:selected="selected">
+      <q-table flat color="primary" :rows="students" :columns="columns" :filter="search" :loading="loading" v-model:selected="selected">
         <template v-slot:top>
           <div class="fit row wrap justify-between items-center">
             <div class="" style=" min-width: 50%; max-width: 50%;">
-              <q-input outlined v-model="search" placeholder="Search name or LRN" size="sm">
+              <q-input outlined v-model="search" placeholder="Search name or LRN" input-class="q-pa-sm">
                 <template v-slot:prepend>
                   <q-icon name="search"/>
                 </template>
@@ -20,7 +19,8 @@
             </div>
             <div>
               <q-btn color="primary" label="Add Student" @click="addStudent" class="q-mr-sm" />
-              <q-btn color="negative" label="Delete all" @click="deleteAll" />
+              <q-btn color="primary" icon="fa-solid fa-file-import" @click="addStudent" class="q-mr-sm" />
+              <q-btn color="negative" icon="archive" @click="deleteAll" />
             </div>
           </div>
         </template>
@@ -30,7 +30,7 @@
               <q-item>
                 <q-item-section side>
                   <q-avatar rounded-full size="40px">
-                    <img src="https://cdn.quasar.dev/img/avatar.png">
+                    <img :src="props.row.imageUrl">
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -58,9 +58,9 @@
               </q-badge>
             </q-td>
             <q-td key="action" :props="props">
-              <q-btn size="sm" color="primary" icon="visibility" class="q-mr-sm" @click="togglePreview"/>
-              <q-btn size="sm" color="primary" icon="edit" class="q-mr-sm" @click="toggleEdit"/>
-              <q-btn size="sm" color="negative" icon="delete" @click="toggleDel"/>
+              <q-btn flat size="sm"  icon="visibility" class="q-mr-sm" @click="togglePreview(props.row)"/>
+              <q-btn flat size="sm" color="primary" icon="edit" class="q-mr-sm" @click="toggleEdit"/>
+              <q-btn flat size="sm" color="negative" icon="delete" @click="toggleDel"/>
             </q-td>
           </q-tr>
         </template>
@@ -71,8 +71,9 @@
 </template>
 
 <script setup>
-import {onBeforeMount, ref} from 'vue'
-import PrevieStudentsVue from 'src/components/PrevieStudents.vue'
+import {onBeforeMount, ref} from 'vue';
+import PrevieStudentsVue from 'src/components/PreviewStudents.vue';
+import AddOrUpdate from 'src/components/AddOrUpdate.vue';
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from 'src/config/firebase';
 
@@ -84,7 +85,7 @@ onBeforeMount(async ()=> {
   try{
     const querySnapshot = await getDocs(collection(db, "students"));
     querySnapshot.forEach((doc) => {
-      students.value.push(doc.data())
+      students.value.push({...{ id:doc.id }, ...doc.data()})
     });
     loading.value = false
   } catch(err){
@@ -130,7 +131,11 @@ const dialogShow = ref(false)
 const dialogEdit = ref(false)
 const dialogDel = ref(false)
 
-const togglePreview = () =>{dialogShow.value = true}
+const student = ref()
+const togglePreview = (row) =>{
+  dialogShow.value = true
+  student.value = row
+}
 const toggleEdit = () =>{dialogEdit.value = true}
 const toggleDel = () =>{dialogDel.value = true}
 

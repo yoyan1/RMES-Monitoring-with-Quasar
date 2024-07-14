@@ -2,51 +2,60 @@
 <template>
   <q-layout view="hHh lpR fFf">
 
-    <q-header elevated class="bg-blue">
+    <q-header class="bg-white">
       <q-toolbar>
-        <q-toolbar-title>
+        <q-toolbar-title class="text-dark text-weight-bold">
           <q-avatar>
-            <img src="https://cdn.quasar.dev/img/avatar.png">
+            <img src="/RMES-logo.png">
           </q-avatar>
           RMES-SM
+          <q-btn flat @click="leftDrawerOpen = !leftDrawerOpen" round dense icon="menu" />
         </q-toolbar-title>
         <div class="row items-center">
-          <q-icon name="group" class="q-mr-sm" />
+          <!-- <q-icon name="assignment" class="q-mr-sm" /> -->
+        <q-btn round class="no-shadow" :outlined="false">
           <q-avatar>
             <img src="https://cdn.quasar.dev/img/avatar.png">
           </q-avatar>
+          <q-menu>
+            <div class="row no-wrap q-pa-md ">
+              <div class="column items-center">
+                <q-avatar size="72px">
+                  <img src="https://cdn.quasar.dev/img/avatar4.jpg">
+                </q-avatar>
+
+                <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+
+                <q-btn color="primary" label="Logout" push size="sm" v-close-popup/>
+              </div>
+            </div>
+          </q-menu>
+        </q-btn>
         </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" bordered>
-      <q-card class="fit">
-        <q-list>
-          <div class="q-pt-sm q-pl-sm">
-            <span class="text-subtitle1">Home</span>
-            <router-link to="/" class="text-dark" style="text-decoration: none">
-            <q-item clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="dashboard" />
-                </q-item-section>
-                <q-item-section> Dashboard</q-item-section>
-              </q-item>
-            </router-link>
-          </div>
+    <q-drawer show-if-above v-model="leftDrawerOpen">
+      <q-card class="fit bg-blue-7">
+        <q-list padding class="rounded-borders text-primary q-pl-sm">
+          <span class="text-subtitle1 text-white font-weight-bold"> Pages</span>
+          <q-item to="/" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon name="dashboard" />
+            </q-item-section>
+            <q-item-section> Dashboard</q-item-section>
+          </q-item>
         </q-list>
-        <q-list>
-          <div class="q-pt-sm q-pl-sm">
-            <span class="text-subtitle1"> Pages</span>
-            <router-link  v-for="list in lists" :key="list.name" :to="list.to" class="text-dark" style="text-decoration: none">
-            <q-item clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon :name="list.icon" />
-                </q-item-section>
-                <q-item-section> {{list.name}}</q-item-section>
-              </q-item>
-            </router-link>
-          </div>
+        <q-list padding class="rounded-borders text-primary q-pl-sm">
+          <span class="text-subtitle1 text-white font-weight-bold"> Pages</span>
+          <q-item v-for="list in lists" :key="list.name" :to="list.to" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon :name="list.icon" />
+            </q-item-section>
+            <q-item-section>{{ list.name }}</q-item-section>
+          </q-item>
         </q-list>
+
 
       </q-card>
     </q-drawer>
@@ -97,3 +106,10 @@ const lists = ref([
 ])
 
 </script>
+
+<style>
+.my-menu-link {
+  background-color: #83bff0; /* Background color for active link */
+  color: #1976D2; /* Text color for active link */
+}
+</style>
