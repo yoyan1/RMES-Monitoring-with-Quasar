@@ -60,7 +60,7 @@
             <q-td key="action" :props="props">
               <q-btn flat size="sm"  icon="visibility" class="q-mr-sm" @click="togglePreview(props.row)"/>
               <q-btn flat size="sm" color="primary" icon="edit" class="q-mr-sm" @click="toggleEdit"/>
-              <q-btn flat size="sm" color="negative" icon="archive" @click="archive(props.row)"/>
+              <q-btn flat size="sm" color="red-5" icon="archive" @click="archive(props.row)"/>
             </q-td>
           </q-tr>
         </template>
