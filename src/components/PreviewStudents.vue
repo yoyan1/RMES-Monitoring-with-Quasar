@@ -1,6 +1,6 @@
 <template>
   <!-- <q-page padding> -->
-    <q-card class="q-pa-md q-mb-md" style="width: 700px; max-width: 80vw;">
+    <q-card class="q-pa-md q-mb-md">
       <q-card-section>
         <div class="text-h6">Preview student</div>
       </q-card-section>

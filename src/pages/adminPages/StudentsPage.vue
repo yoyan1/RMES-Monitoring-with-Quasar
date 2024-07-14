@@ -2,7 +2,8 @@
   <q-page class="bg-grey-1 q-pt-md q-pl-md q-pr-md">
     <q-card class="no-shadow">
       <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue :student="student"/></q-dialog>
-      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)" full-width><add-or-update :student="student"/></q-dialog>
+      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><add-or-update :student="student"/></q-dialog>
+      <q-dialog v-model="confirm" persistent><confirm-message :student="student"/></q-dialog>
       <q-card-section >
         <div class="text-h6">All Students: {{ students.length }}</div>
         
@@ -18,9 +19,8 @@
               </q-input>
             </div>
             <div>
-              <q-btn color="primary" label="Add Student" @click="addStudent" class="q-mr-sm" />
-              <q-btn color="primary" icon="fa-solid fa-file-import" @click="addStudent" class="q-mr-sm" />
-              <q-btn color="negative" icon="archive" @click="deleteAll" />
+              <q-btn flat text-color="white" color="primary" label="Add Student" @click="addStudent" class="q-mr-sm bg-blue-6" />
+              <q-btn flat text-color="white" color="primary" icon="archive" @click="deleteAll" class="bg-blue-3 hover:bg-blue-5" />
             </div>
           </div>
         </template>
@@ -53,14 +53,14 @@
               {{ props.row.gender }}
             </q-td>
             <q-td key="status" :props="props">
-              <q-badge :color="props.row.status == 'Present'? 'green' : 'red'">
-                {{ props.row.status }}
-              </q-badge>
+              <q-badge color="green" v-if="props.row.status == 'Present'">{{ props.row.status }}</q-badge>
+              <q-badge color="red" v-else-if="props.row.status == 'Out of school'">{{ props.row.status }}</q-badge>
+              <q-badge color="grey" v-else>{{ props.row.status }}</q-badge>
             </q-td>
             <q-td key="action" :props="props">
               <q-btn flat size="sm"  icon="visibility" class="q-mr-sm" @click="togglePreview(props.row)"/>
               <q-btn flat size="sm" color="primary" icon="edit" class="q-mr-sm" @click="toggleEdit"/>
-              <q-btn flat size="sm" color="negative" icon="delete" @click="toggleDel"/>
+              <q-btn flat size="sm" color="negative" icon="archive" @click="archive(props.row)"/>
             </q-td>
           </q-tr>
         </template>
@@ -74,6 +74,7 @@
 import {onBeforeMount, ref} from 'vue';
 import PrevieStudentsVue from 'src/components/PreviewStudents.vue';
 import AddOrUpdate from 'src/components/AddOrUpdate.vue';
+import ConfirmMessage from 'src/components/ArchiveStudent.vue';
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from 'src/config/firebase';
 
@@ -118,18 +119,18 @@ function calculateAge(birthDate) {
 }
 
 function  addStudent() {
-      console.log('Add student clicked')
-    }
+  console.log('Add student clicked')
+}
 
 function  deleteAll() {
-      console.log('Delete all clicked')
-    }
+  console.log('Delete all clicked')
+}
 
 const onRowClick =(row) => {dialogShow.value = true}
 
 const dialogShow = ref(false)
 const dialogEdit = ref(false)
-const dialogDel = ref(false)
+const confirm = ref(false)
 
 const student = ref()
 const togglePreview = (row) =>{
@@ -137,7 +138,10 @@ const togglePreview = (row) =>{
   student.value = row
 }
 const toggleEdit = () =>{dialogEdit.value = true}
-const toggleDel = () =>{dialogDel.value = true}
+const archive = (row) =>{
+  confirm.value = true
+  student.value = row
+}
 
 </script>
 
