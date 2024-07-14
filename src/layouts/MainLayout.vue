@@ -1,7 +1,6 @@
 
 <template>
   <q-layout view="hHh lpR fFf">
-
     <q-header class="bg-white">
       <q-toolbar>
         <q-toolbar-title class="text-dark text-weight-bold">
@@ -13,7 +12,7 @@
         </q-toolbar-title>
         <div class="row items-center">
           <!-- <q-icon name="assignment" class="q-mr-sm" /> -->
-        <q-btn round class="no-shadow" :outlined="false">
+        <q-btn round flat :outlined="false">
           <q-avatar>
             <img src="https://cdn.quasar.dev/img/avatar.png">
           </q-avatar>
@@ -69,6 +68,7 @@
 
 <script setup>
 import { ref } from 'vue';
+
 
 const leftDrawerOpen = ref(true)
 

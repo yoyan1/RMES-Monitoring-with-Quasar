@@ -72,7 +72,7 @@
 
 <script setup>
 import {ref} from 'vue'
-import PrevieStudentsVue from 'src/components/PreviewStudents.vue'
+import PrevieStudentsVue from 'src/components/students/PreviewStudents.vue'
 
 const  search = ref('')
 const students = ref([

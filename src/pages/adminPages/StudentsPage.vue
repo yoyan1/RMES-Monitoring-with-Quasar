@@ -19,8 +19,8 @@
               </q-input>
             </div>
             <div>
-              <q-btn flat text-color="white" color="primary" label="Add Student" @click="addStudent" class="q-mr-sm bg-blue-6" />
-              <q-btn flat text-color="white" color="primary" icon="archive" @click="deleteAll" class="bg-blue-3 hover:bg-blue-5" />
+              <q-btn flat text-color="white" color="primary" label="Add Student" @click="toggleEdit" class="q-mr-sm bg-blue-6" />
+              <q-btn flat text-color="white" color="primary" icon="archive" @click="archive" class="bg-blue-3 hover:bg-blue-5" />
             </div>
           </div>
         </template>
@@ -58,9 +58,27 @@
               <q-badge color="grey" v-else>{{ props.row.status }}</q-badge>
             </q-td>
             <q-td key="action" :props="props">
-              <q-btn flat size="sm"  icon="visibility" class="q-mr-sm" @click="togglePreview(props.row)"/>
-              <q-btn flat size="sm" color="primary" icon="edit" class="q-mr-sm" @click="toggleEdit"/>
-              <q-btn flat size="sm" color="red-5" icon="archive" @click="archive(props.row)"/>
+              <q-btn flat>
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+                <q-menu>
+                  <q-list dense style="min-width: 100px">
+                    <q-item clickable v-close-popup  @click="togglePreview(props.row)">
+                      <q-item-section>Preview</q-item-section>
+                      <q-item-section side><i class="fa-regular fa-eye"></i></q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup @click="toggleEdit">
+                      <q-item-section>Edit</q-item-section>
+                      <q-item-section side ><i class="fa-solid fa-pen-to-square"></i></q-item-section>
+                    </q-item>
+                    <q-separator />
+                    <q-separator />
+                    <q-item clickable v-close-popup @click="archive(props.row)">
+                      <q-item-section>Archive</q-item-section>
+                      <q-item-section side><i class="fa-solid fa-box-archive"></i></q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
             </q-td>
           </q-tr>
         </template>
@@ -72,9 +90,9 @@
 
 <script setup>
 import {onBeforeMount, ref} from 'vue';
-import PrevieStudentsVue from 'src/components/PreviewStudents.vue';
-import AddOrUpdate from 'src/components/AddOrUpdate.vue';
-import ConfirmMessage from 'src/components/ArchiveStudent.vue';
+import PrevieStudentsVue from 'src/components/students/PreviewStudents.vue';
+import AddOrUpdate from 'src/components/students/AddOrUpdate.vue';
+import ConfirmMessage from 'src/components/students/ArchiveStudent.vue';
 import { collection, getDocs } from "firebase/firestore"; 
 import { db } from 'src/config/firebase';
 
