@@ -2,17 +2,17 @@
   <q-page class="bg-grey-1 q-pt-md q-pl-md q-pr-md">
     <q-card class="no-shadow">
       <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue :student="student"/></q-dialog>
-      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><add-or-update :student="student"/></q-dialog>
+      <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)" persistent><add-or-update :student="student"/></q-dialog>
       <q-dialog v-model="confirm" persistent><confirm-message :student="student"/></q-dialog>
       <q-card-section >
         <div class="text-h6">All Students: {{ students.length }}</div>
         
       </q-card-section>
-      <q-table flat color="primary" :rows="students" :columns="columns" :filter="search" :loading="loading" v-model:selected="selected">
+      <q-table flat color="primary" :rows="filteredRows" :columns="columns"  :loading="loading" v-model:selected="selected">
         <template v-slot:top>
           <div class="fit row wrap justify-between items-center">
             <div class="" style=" min-width: 50%; max-width: 50%;">
-              <q-input outlined v-model="search" placeholder="Search name or LRN" input-class="q-pa-sm">
+              <q-input outlined v-model="search" placeholder="Search..." input-class="q-pa-sm">
                 <template v-slot:prepend>
                   <q-icon name="search"/>
                 </template>
@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import {onBeforeMount, ref} from 'vue';
+import {onBeforeMount, ref, computed} from 'vue';
 import PrevieStudentsVue from 'src/components/students/PreviewStudents.vue';
 import AddOrUpdate from 'src/components/students/AddOrUpdate.vue';
 import ConfirmMessage from 'src/components/students/ArchiveStudent.vue';
@@ -135,6 +135,15 @@ function calculateAge(birthDate) {
     }
     return age;
 }
+
+const filteredRows = computed(() => {
+      const filterString = search.value.toLowerCase()
+      return students.value.filter(row => 
+        Object.values(row).some(value =>
+          String(value).toLowerCase().includes(filterString)
+        )
+      )
+    })
 
 function  addStudent() {
   console.log('Add student clicked')

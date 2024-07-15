@@ -37,8 +37,8 @@
     <q-drawer show-if-above v-model="leftDrawerOpen">
       <q-card class="fit bg-blue-7">
         <q-list padding class="rounded-borders text-primary q-pl-sm">
-          <span class="text-subtitle1 text-white font-weight-bold"> Pages</span>
-          <q-item to="/" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
+          <span class="text-subtitle1 text-white font-weight-bold"> Home</span>
+          <q-item to="home" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
             <q-item-section avatar>
               <q-icon name="dashboard" />
             </q-item-section>

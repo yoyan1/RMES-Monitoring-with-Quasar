@@ -1,69 +1,56 @@
 <template>
     <q-card class="q-pa-md q-mb-md">
-      <q-card-section>
-        <div class="text-h6">Add student</div>
-      </q-card-section>
+      <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Close icon</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
       <q-separator/>
-      <q-card-section>
-        <q-form @submit="onSubmit" @reset="onReset">
-            <div>
-              <div class="fit flex">
-                <q-input filled v-model="name" label="Your name *" hint="Name and surname" lazy-rules :rules="[ val => val && val.length > 0 || 'Please type something']" class="q-mr-md"/>
-                <q-input filled type="number" v-model="age" label="Your age *" lazy-rules :rules="[   val => val !== null && val !== '' || 'Please type your age',   val => val > 0 && val < 100 || 'Please type a real age' ]"/>
-              </div>
+      <q-form >
+        <q-stepper v-model="step" vertical color="primary" animated >
+          <q-step :name="1" title="Personal details" icon="settings" :done="step > 1" >
+            <div class="fit row justify-between">
+              <q-input type="text" placeholder="Name" class="q-mx-sm"/>
+              <q-input type="text" placeholder="Name" class="q-mx-sm"/>
             </div>
-          <div class="q-mt-md">
-            <q-btn label="Submit" type="submit" color="primary"/>
-            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-          </div>
-        </q-form>
-      </q-card-section>
+            <q-stepper-navigation>
+              <q-btn @click="step = 2" color="primary" label="Continue" />
+            </q-stepper-navigation>
+          </q-step>
+  
+          <q-step :name="2" title="Educational details"  icon="create_new_folder" :done="step > 2" >
+            <div class="fit row justify-between">
+              <q-input type="text" placeholder="Name" class="q-mx-sm"/>
+              <q-input type="text" placeholder="Name" class="q-mx-sm"/>
+            </div>
+            <q-stepper-navigation>
+              <q-btn @click="step = 4" color="primary" label="Continue" />
+              <q-btn flat @click="step = 1" color="primary" label="Back" class="q-ml-sm" />
+            </q-stepper-navigation>
+          </q-step>
+
+          <q-step :name="4" title="Upload" icon="add_comment" >
+            <q-uploader
+      url="http://localhost:4444/upload"
+    />
+            <q-stepper-navigation>
+              <q-btn color="primary" label="Finish" />
+              <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
+            </q-stepper-navigation>
+          </q-step>
+        </q-stepper>
+      </q-form>
     </q-card>
   </template>
   
   <script>
-  import { useQuasar } from 'quasar'
   import { ref } from 'vue'
   
   export default {
     setup () {
-      const $q = useQuasar()
-  
-      const name = ref(null)
-      const age = ref(null)
-      const accept = ref(false)
-  
       return {
-        name,
-        age,
-        accept,
-  
-        onSubmit () {
-          if (accept.value !== true) {
-            $q.notify({
-              color: 'red-5',
-              textColor: 'white',
-              icon: 'warning',
-              message: 'You need to accept the license and terms first'
-            })
-          }
-          else {
-            $q.notify({
-              color: 'green-4',
-              textColor: 'white',
-              icon: 'cloud_done',
-              message: 'Submitted'
-            })
-          }
-        },
-  
-        onReset () {
-          name.value = null
-          age.value = null
-          accept.value = false
-        }
+        step: ref(1)
       }
     }
   }
   </script>
-  
