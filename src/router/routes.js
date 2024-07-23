@@ -1,9 +1,13 @@
 const routes = [
   {
     path: '/',
+    component: () => import('pages/IndexPage.vue'),
+  },
+  {
+    path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '/home', component: () => import('pages/IndexPage.vue') },
+      { path: 'home', component: () => import('src/pages/adminPages/IndexPage.vue') },
       { path: 'students', component: () => import('src/pages/adminPages/StudentsPage.vue') },
       { path: 'attendance', component: () => import('src/pages/adminPages/AttendancePage.vue') },
       { path: 'requests', component: () => import('src/pages/adminPages/RequestsPage.vue') },

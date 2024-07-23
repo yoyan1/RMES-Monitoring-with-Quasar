@@ -12,7 +12,7 @@
         <template v-slot:top>
           <div class="fit row wrap justify-between items-center">
             <div class="" style=" min-width: 50%; max-width: 50%;">
-              <q-input outlined v-model="search" placeholder="Search..." input-class="q-pa-sm">
+              <q-input  v-model="search" placeholder="Search..." input-class="q-pa-sm">
                 <template v-slot:prepend>
                   <q-icon name="search"/>
                 </template>
@@ -20,7 +20,8 @@
             </div>
             <div>
               <q-btn flat text-color="white" color="primary" label="Add Student" @click="toggleEdit" class="q-mr-sm bg-blue-6" />
-              <q-btn flat text-color="white" color="primary" icon="archive" @click="archive" class="bg-blue-3 hover:bg-blue-5" />
+              <q-btn flat text-color="white" color="primary"  @click="archive" class="bg-blue-3 hover:bg-blue-5 q-mr-sm" ><i class="fa-solid fa-box-archive"></i></q-btn>
+              <q-btn flat text-color="white" color="primary"  @click="archive" class="bg-blue-3 hover:bg-blue-5 q-mr-sm" ><i class="fa-solid fa-file-import"></i></q-btn>
             </div>
           </div>
         </template>
