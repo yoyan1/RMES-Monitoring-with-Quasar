@@ -6,8 +6,8 @@ import QrcodeVue from 'qrcode.vue'
 // })
 </script>
 <template>
-  <div>
-      <qrcode-vue value="sdhasdha" :size="150" level="H" />
-  </div>
-</template>
+    <div>
+        <qrcode-vue value="sdhasdha" :size="150" level="H" />
+    </div>
+  </template>
   

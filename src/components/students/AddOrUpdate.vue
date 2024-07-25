@@ -1,12 +1,19 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { query, where, collection, onSnapshot, setDoc, doc, getDocs, getDoc, updateDoc } from "firebase/firestore";
+import { db } from 'src/config/firebase';
 import { useCrud } from 'src/stores/crudsStrore';
 import { useStorage } from 'src/stores/storageStore';
 
 const cruds = useCrud()
 const imageStore = useStorage()
 const step = ref(1)
+const isLoading = ref(false)
+const idNumberGenerated = ref({})
+const id = ref()
+const image = ref(null)
 const studentData = ref({
+  student_id: id.value,
   fullname: '',
   gender: '',
   date_of_birth: '',
@@ -21,21 +28,17 @@ const studentData = ref({
   section: '',
   lrn: 0,
   imageUrl: '',
-  status: '',
+  status: 'pending',
 })
 
 const completeAddress = computed(() => {
 return studentData.value.street + ', ' + studentData.value.barangay + ', ' +studentData.value.municipality + ', ' + studentData.value.province
 })
 
-const onSubmit = async () => {
-  console.log("submitted");
-}
-
 let newId;
 async function getNewId() {
     try {
-        const docRef = doc(db, "idGenerator", 'KIMavxAVbS6PQn6Iyndk');
+        const docRef = doc(db, "idGenerator", 'yJf83yJpygmTCj7tg95V');
         const docSnap = await getDoc(docRef);
 
         idNumberGenerated.value = docSnap.data();
@@ -47,33 +50,32 @@ async function getNewId() {
         console.error("error fetching data", error);
     }
 }
-
+getNewId()
 async function onSubmit(e) {
     isLoading.value = true;
-    if (file) {
-        await imageStore.upload('students_image/', file);
-        const { imageUrl } = await imageStore.useFirebaseStorage('students_image/', file.name);
-        studentData.value.image = imageUrl;
+    if (image.value) {
+        await imageStore.upload('studentsImage/', image.value);
+        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', image.value);
+        studentData.value.imageUrl = imageUrl;
 
-    } else if(!studentData.value.image){
-        const { imageUrl } = await imageStore.useFirebaseStorage('students_image/', 'default.jpg');
-        studentData.value.image = imageUrl;
+    } else if(!studentData.value.imageUrl){
+        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', 'default.jpg');
+        studentData.value.imageUrl = imageUrl;
         console.log("no file selected");
     }
 
     try {
 
         if(e){
-            studentData.value = { ...studentData.value, ...{ uid: uid.value, email: email.value, student_id: id.value } };
-            await cruds.setDocument("students", id.value, studentData.value)
+            studentData.value = { ...studentData.value, ...{ student_id: id.value } };
+            await cruds.setDocument("requests", id.value, studentData.value)
             // Increment idGenerator
-            await cruds.updateDocument('idGenerator', 'KIMavxAVbS6PQn6Iyndk', { count: newId })
+            await cruds.updateDocument('idGenerator', 'yJf83yJpygmTCj7tg95V', { count: newId })
             
         } else{
             await cruds.updateDocument('students', studentData.value.student_id, studentData.value)
         }
             
-        router.push('/user-profile')
 
     } catch (error) {
         console.error(error);
@@ -85,7 +87,8 @@ async function onSubmit(e) {
 <template>
     <q-card class="q-pa-md q-mb-md">
       <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Add student</div>
+            {{ id }}
+            <div class="text-h6">Add student</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -94,7 +97,7 @@ async function onSubmit(e) {
         <q-stepper v-model="step" vertical color="primary" animated >
           <q-step :name="1" title="Personal details" icon="settings" :done="step > 1" >
             <div class="fit row justify-between">
-              <q-input filled outlined label="Full name" class="q-mb-md" dense/>
+              <q-input filled outlined v-model="studentData.fullname" label="Full name" class="q-mb-md" dense/>
               <q-select filled dense outlined v-model="studentData.gender" :options="['male', 'female']" label="Gender" style="width: 183px"></q-select> 
               <q-input filled dense outlined v-model="studentData.date_of_birth" mask="date" :rules="['date']" style="width:183px" label="Date of Birth">
                 <template v-slot:append>
@@ -142,7 +145,7 @@ async function onSubmit(e) {
 
           <q-step :name="4" title="Upload" icon="add_comment" >
             <div class="w-full">
-              <q-file dense filled bottom-slots v-model="studentData.imageUrl" label="Label" counter>
+              <q-file dense filled bottom-slots v-model="image" label="Label" counter>
                 <template v-slot:prepend>
                   <q-icon name="cloud_upload" @click.stop.prevent />
                 </template>
@@ -155,7 +158,7 @@ async function onSubmit(e) {
               </q-file>
             </div>
             <q-stepper-navigation>
-              <q-btn label="Submit" type="submit" color="primary"/>
+              <q-btn label="Submit" type="submit" color="primary" :loading="isLoading"/>
               <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
             </q-stepper-navigation>
           </q-step>

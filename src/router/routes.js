@@ -20,6 +20,10 @@ const routes = [
       },
     ]
   },
+  {
+    path: '/time-in-out',
+    component: () => import('src/pages/scanner/QrScanner.vue')
+  },
 
   // Always leave this as last one,
   // but you can also remove it
