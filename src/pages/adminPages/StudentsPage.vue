@@ -19,9 +19,9 @@
               </q-input>
             </div>
             <div>
-              <q-btn flat text-color="white" color="primary" label="Add Student" @click="toggleEdit" class="q-mr-sm bg-blue-6" />
-              <q-btn flat text-color="white" color="primary"  @click="archive" class="bg-blue-3 hover:bg-blue-5 q-mr-sm" ><i class="fa-solid fa-box-archive"></i></q-btn>
-              <q-btn flat text-color="white" color="primary"  @click="archive" class="bg-blue-3 hover:bg-blue-5 q-mr-sm" ><i class="fa-solid fa-file-import"></i></q-btn>
+              <q-btn size="sm" flat text-color="white" color="primary" label="Add Student" @click="toggleEdit" class="q-mr-sm bg-blue-6" />
+              <q-btn size="md" flat text-color="primary" color="primary"  @click="archive" class="q-mr-sm" ><i class="fa-solid fa-box-archive"></i></q-btn>
+              <q-btn size="md" flat text-color="primary" color="primary"  @click="archive" class="q-mr-sm" ><i class="fa-solid fa-file-import"></i></q-btn>
             </div>
           </div>
         </template>
@@ -67,7 +67,7 @@
                       <q-item-section>Preview</q-item-section>
                       <q-item-section side><i class="fa-regular fa-eye"></i></q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="toggleEdit">
+                    <q-item clickable v-close-popup @click="toggleEdit(props.row)">
                       <q-item-section>Edit</q-item-section>
                       <q-item-section side ><i class="fa-solid fa-pen-to-square"></i></q-item-section>
                     </q-item>
@@ -165,7 +165,12 @@ const togglePreview = (row) =>{
   dialogShow.value = true
   student.value = row
 }
-const toggleEdit = () =>{dialogEdit.value = true}
+
+const toggleEdit = (row) =>{
+  student.value = row
+  dialogEdit.value = true
+}
+
 const archive = (row) =>{
   confirm.value = true
   student.value = row

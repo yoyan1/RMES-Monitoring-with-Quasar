@@ -38,7 +38,7 @@
       <q-card class="fit bg-blue-7">
         <q-list padding class="rounded-borders text-primary q-pl-sm">
           <span class="text-subtitle1 text-white font-weight-bold"> Home</span>
-          <q-item to="/admin/" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
+          <q-item to="/admin/home" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
             <q-item-section avatar>
               <q-icon name="dashboard" />
             </q-item-section>
@@ -95,7 +95,7 @@ const lists = ref([
   },
   {
     icon: 'people',
-    name: 'Account',
+    name: 'Accounts',
     to: '/admin/accounts',
   },
   {

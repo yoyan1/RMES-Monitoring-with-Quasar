@@ -1,14 +1,14 @@
 <template>
     <q-page class="bg-grey-2 q-pt-md q-pl-md q-pr-md">
       <q-card class="no-shadow">
-        <q-dialog v-model="dialogShow" :student="student" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
+        <q-dialog v-model="dialogShow" backdrop-filter="brightness(60%)"><previe-students-vue :student="student" :request="true"/></q-dialog>
         <q-dialog v-model="dialogEdit" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
         <q-dialog v-model="dialogDel" backdrop-filter="brightness(60%)"><previe-students-vue/></q-dialog>
         <q-card-section >
           <div class="text-h6">All Requests: {{ students.length }}</div>
           
         </q-card-section>
-        <q-table color="primary" :rows="students" :columns="columns" row-key="LRN" :filter="search" loading>
+        <q-table color="primary" :rows="students" :columns="columns" row-key="LRN" :filter="search" :loading="loading">
           <template v-slot:body="props">
             <q-tr :props="props" @click="onRowClick(props.row)">
               <q-td key="name" :props="props">
@@ -26,18 +26,21 @@
               <q-td key="LRN" :props="props">
                 {{ props.row.lrn }}
               </q-td>
+              <q-td key="level" :props="props">
+                {{ props.row.level }}
+              </q-td>
               <q-td key="age" :props="props">
-                  {{ props.row.age }}
-                </q-td>
-                <q-td key="gender" :props="props">
-                    {{ props.row.gender }}
-                </q-td>
-                <q-td key="status" :props="props">
-                    {{ props.row.status }}
-                </q-td>
-                <q-td key="action" :props="props">
-                <q-btn size="sm" color="primary" icon="done" class="q-mr-sm" @click="toggleEdit"/>
-                <Confirm :row="props.row" :size="'sm'" :color="'red-5'" :icon="'fa-solid fa-x'" :message="'Are you sure you want to delete this?'" :label="''" :path="'requests'"/>
+                {{ props.row.date_of_birth }}
+              </q-td>
+              <q-td key="gender" :props="props">
+                  {{ props.row.gender }}
+              </q-td>
+              <q-td key="status" :props="props">
+                  {{ props.row.status }}
+              </q-td>
+              <q-td key="action" :props="props">
+              <q-btn size="sm" color="primary" icon="done" class="q-mr-sm" @click="toggleEdit"/>
+              <Confirm :row="props.row" :size="'sm'" :color="'red-5'" :icon="'fa-solid fa-x'" :message="'Are you sure you want to delete this?'" :label="''" :path="'requests'"/>
               </q-td>
             </q-tr>
           </template>
@@ -75,7 +78,7 @@ onBeforeMount(async ()=> {
     
   const  search = ref('')
   
-  const columns = ref([
+const columns = ref([
   { name: 'name', required: true, label: 'Name', align: 'left', field: row => row.name },
   { name: 'LRN', align: 'left', label: 'LRN', field: 'LRN' },
   { name: 'level', align: 'left', label: 'Grade Level', field: 'level' },
@@ -92,18 +95,18 @@ function  deleteAll() {
 }
 
   
-  const onRowClick =(row) => {
-    dialogShow.value = true
-    student.value = row
-  }
-  
-  const dialogShow = ref(false)
-  const dialogEdit = ref(false)
-  const dialogDel = ref(false)
-  
-  const togglePreview = () =>{dialogShow.value = true}
-  const toggleEdit = () =>{dialogEdit.value = true}
-  const toggleDel = () =>{dialogDel.value = true}
+const onRowClick =(row) => {
+  dialogShow.value = true
+  student.value = row
+}
+
+const dialogShow = ref(false)
+const dialogEdit = ref(false)
+const dialogDel = ref(false)
+
+const togglePreview = () =>{dialogShow.value = true}
+const toggleEdit = () =>{dialogEdit.value = true}
+const toggleDel = () =>{dialogDel.value = true}
   
   </script>
   

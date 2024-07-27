@@ -1,14 +1,20 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router';
 import { query, where, collection, onSnapshot, setDoc, doc, getDocs, getDoc, updateDoc } from "firebase/firestore";
 import { db } from 'src/config/firebase';
 import { useCrud } from 'src/stores/crudsStrore';
 import { useStorage } from 'src/stores/storageStore';
 
+const route = useRouter()
 const cruds = useCrud()
 const imageStore = useStorage()
 const step = ref(1)
 const isLoading = ref(false)
+const props = defineProps({
+  student: Object
+})
+
 const idNumberGenerated = ref({})
 const id = ref()
 const image = ref(null)
@@ -33,6 +39,10 @@ const studentData = ref({
 
 const completeAddress = computed(() => {
 return studentData.value.street + ', ' + studentData.value.barangay + ', ' +studentData.value.municipality + ', ' + studentData.value.province
+})
+
+onMounted(()=>{
+  studentData.value = {...studentData.value, ...props.student}
 })
 
 let newId;
@@ -81,6 +91,7 @@ async function onSubmit(e) {
         console.error(error);
     } finally {
         isLoading.value = false;
+        route.push('/admin/home')
     }
 }
 </script>

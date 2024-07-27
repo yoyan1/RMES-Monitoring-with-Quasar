@@ -20,8 +20,8 @@ const decline = (row) => {
 
 </script>
 <template>
-  <q-btn :size="props.size" :label="props.label" :color="props.color" @click="confirm = true" >
-    <q-icon :name="props.icon"/>
+  <q-btn :size="props.size" :label="props.label" :color="props.color" @click="confirm = true">
+    <q-icon :name="props.icon" v-if="props.icon"/>
   </q-btn>
 
   <q-dialog v-model="confirm" persistent>

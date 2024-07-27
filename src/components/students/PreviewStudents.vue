@@ -21,7 +21,7 @@
             <q-badge color="red" v-else-if="student.status == 'Out of school'">{{ student.status }}</q-badge>
             <q-badge color="grey" v-else>{{ student.status }}</q-badge>
           </div>
-          <div class="text-body1">Grade {{student.level }}</div>
+          <div class="text-body1">{{student.level }}</div>
           <div class="text-body2 text-grey"> {{ student.street }}</div>
         </div>
       </q-card-section>
@@ -91,7 +91,7 @@
         </div>
       </q-card-section>
 
-      <q-card-section>
+      <q-card-section v-if="!props.request" >
         <q-separator />
         <div class="text-subtitle2">Attendance Record</div>
         <q-select label="Select date" />
@@ -108,10 +108,14 @@
       </q-card-section>
 
 
-      <q-card-actions align="right">
+      <q-card-actions align="right" v-if="!props.request" >
         <q-btn flat icon="edit" @click="edit = !edit" />
         <q-btn flat icon="archive" @click="confirm = !confirm"/>
         <q-btn flat icon="print" @click="print = !print"/>
+      </q-card-actions>
+      <q-card-actions align="right" v-else>
+        <q-btn size="sm" color="primary" label="Accept" />
+        <confirmAlert :row="props.student" :size="'sm'" :color="'red-5'" :icon="''" :message="'Are you sure you want to delete this?'" :label="'Decline'" :path="'requests'"/>
       </q-card-actions>
     </q-card>
 </template>
@@ -123,10 +127,12 @@ import { ref, onMounted } from 'vue';
 import AddOrUpdate from './AddOrUpdate.vue';
 import printQR from './printQR.vue';
 import ArchiveStudent from './ArchiveStudent.vue';
+import confirmAlert from '../actions/confirmAlert.vue';
 import { formatDate } from 'app/composables/formateDate';
 
   const props = defineProps({
-    student: Object
+    student: Object,
+    request: Boolean
   })
 
   const edit = ref(false)
