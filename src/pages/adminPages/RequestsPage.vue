@@ -39,8 +39,8 @@
                   {{ props.row.status }}
               </q-td>
               <q-td key="action" :props="props">
-              <q-btn size="sm" color="primary" icon="done" class="q-mr-sm" @click="toggleEdit"/>
-              <Confirm :row="props.row" :size="'sm'" :color="'red-5'" :icon="'fa-solid fa-x'" :message="'Are you sure you want to delete this?'" :label="''" :path="'requests'"/>
+                <q-btn size="sm" color="primary" icon="done" class="q-mr-sm" @click="accept(props.row)"/>
+                <Confirm :row="props.row" :size="'sm'" :color="'red-5'" :icon="'fa-solid fa-x'" :message="'Are you sure you want to delete this?'" :label="''" :path="'requests'"/>
               </q-td>
             </q-tr>
           </template>
@@ -52,12 +52,14 @@
   
 <script setup>
 import {ref, onBeforeMount} from 'vue'
+import { useQuasar } from 'quasar'
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from 'src/config/firebase';
 import { useCrud } from 'src/stores/crudsStrore';
 import Confirm from 'src/components/actions/confirmAlert.vue';
 import PrevieStudentsVue from 'src/components/students/PreviewStudents.vue';
 
+const $q = useQuasar()
 const cruds = useCrud();
 const loading = ref(false);
 const students = ref([]);
@@ -88,12 +90,22 @@ const columns = ref([
   { name: 'action', align: 'center', label: 'Action', field: 'action' }
 ])
 
-
-  
-function  deleteAll() {
-  console.log('Delete all clicked')
+const load = ref(false)
+const accept = async (row) => {
+  load.value = true
+  try{
+    // await cruds.setDocument('students', row.id, row);
+    // await cruds.deleteDocument('requests', row.id);
+    $q.notify({
+      type: 'positive',
+      message: 'Successfuly added to students list',
+      position: 'top',
+    })
+    load.value = false
+  } catch (err){
+    console.log("error accepting:", err);
+  }
 }
-
   
 const onRowClick =(row) => {
   dialogShow.value = true

@@ -1,19 +1,16 @@
 <template>
   <!-- <q-page padding> -->
     <q-dialog v-model="edit" backdrop-filter="brightness(60%)"><add-or-update :student="student"/></q-dialog>
-    <q-dialog v-model="print" full-width><printQR/></q-dialog>
+    <q-dialog v-model="print" full-width><printQR :student="props.student"/></q-dialog>
     <q-dialog v-model="confirm" persistent><archive-student :student="student"/></q-dialog>
     <q-card class="q-pa-md q-mb-md">
       <q-card-section>
         <div class="text-h6">Preview student</div>
       </q-card-section>
       <q-card-section class="q-gutter-md row">
-        <q-img
-          :src="student.imageUrl"
-          class="q-ml-md"
-          style="width: 150px; height: 150px"
-          :ratio="1"
-        />
+        <q-avatar square size="150px">
+          <img :src="student.imageUrl">
+        </q-avatar>
         <div>
           <div class="text-h6">{{ student.fullname }}</div>
           <div>

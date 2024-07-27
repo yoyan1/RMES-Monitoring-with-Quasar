@@ -26,7 +26,7 @@
           </div>
         </template>
         <template v-slot:body="props">
-          <q-tr :props="props">
+          <q-tr :props="props" @click="togglePreview(props.row)">
             <q-td key="name" :props="props">
               <q-item>
                 <q-item-section side>

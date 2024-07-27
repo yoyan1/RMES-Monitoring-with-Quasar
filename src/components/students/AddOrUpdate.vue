@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { onFileChange, image, file } from 'app/composables/fileHandler';
 import { query, where, collection, onSnapshot, setDoc, doc, getDocs, getDoc, updateDoc } from "firebase/firestore";
 import { db } from 'src/config/firebase';
 import { useCrud } from 'src/stores/crudsStrore';
@@ -17,7 +18,7 @@ const props = defineProps({
 
 const idNumberGenerated = ref({})
 const id = ref()
-const image = ref(null)
+// const image = ref(null)
 const studentData = ref({
   student_id: id.value,
   fullname: '',
@@ -63,9 +64,9 @@ async function getNewId() {
 getNewId()
 async function onSubmit(e) {
     isLoading.value = true;
-    if (image.value) {
-        await imageStore.upload('studentsImage/', image.value);
-        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', image.value);
+    if (file) {
+        await imageStore.upload('studentsImage/', file);
+        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', file.name);
         studentData.value.imageUrl = imageUrl;
 
     } else if(!studentData.value.imageUrl){
@@ -85,8 +86,6 @@ async function onSubmit(e) {
         } else{
             await cruds.updateDocument('students', studentData.value.student_id, studentData.value)
         }
-            
-
     } catch (error) {
         console.error(error);
     } finally {
@@ -97,15 +96,14 @@ async function onSubmit(e) {
 </script>
 <template>
     <q-card class="q-pa-md q-mb-md">
-      <q-card-section class="row items-center q-pb-none">
-            {{ id }}
-            <div class="text-h6">Add student</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
+      <q-card-section class="row items-center q-pa-none">
+          <div class="text-h6">Add student</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
       <q-separator/>
       <q-form @submit="onSubmit" class="full">
-        <q-stepper v-model="step" vertical color="primary" animated >
+        <q-stepper v-model="step" vertical color="primary" animated flat>
           <q-step :name="1" title="Personal details" icon="settings" :done="step > 1" >
             <div class="fit row justify-between">
               <q-input filled outlined v-model="studentData.fullname" label="Full name" class="q-mb-md" dense/>
@@ -123,7 +121,7 @@ async function onSubmit(e) {
                   </q-icon>
                 </template>
               </q-input>
-              <q-input filled dense outlined type="text" label="Parent/Guardian" />
+              <q-input filled dense outlined type="text" label="Parent/Guardian" v-model="studentData.parent" />
               <q-input filled dense v-model="studentData.contact_number" label="Phone" mask="09## ### ####" hint="ex. 12 324 6764" class="q-mb-sm"/>
             </div>
             <div>
@@ -155,18 +153,16 @@ async function onSubmit(e) {
           </q-step>
 
           <q-step :name="4" title="Upload" icon="add_comment" >
-            <div class="w-full">
-              <q-file dense filled bottom-slots v-model="image" label="Label" counter>
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" @click.stop.prevent />
-                </template>
-                <template v-slot:append>
-                  <q-icon name="close" @click.stop.prevent="studentData.imageUrl = null" class="cursor-pointer" />
-                </template>
-                <template v-slot:hint>
-                  Student image
-                </template>
-              </q-file>
+            <div class="w-full flex items-end gap-3">
+              <div class="flex justify-center">
+                <q-avatar square size="150px">
+                  <img :src="studentData.imageUrl" v-if="!image">
+                  <img :src="image" v-else>
+                </q-avatar>
+              </div>
+              <div>
+                <input type="file" @change="onFileChange" name="" id="">
+              </div>
             </div>
             <q-stepper-navigation>
               <q-btn label="Submit" type="submit" color="primary" :loading="isLoading"/>

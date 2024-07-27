@@ -1,9 +1,9 @@
 <script setup>
 import QrcodeVue from 'qrcode.vue'
 
-// const props = defineProps({
-//     id: String,
-// })
+const props = defineProps({
+    id: String,
+})
 </script>
 <template>
     <div>
