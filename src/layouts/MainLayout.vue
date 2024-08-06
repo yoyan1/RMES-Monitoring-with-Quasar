@@ -8,7 +8,7 @@
             <img src="/RMES-logo.png">
           </q-avatar>
           RMES-SM
-          <q-btn flat @click="leftDrawerOpen = !leftDrawerOpen" round dense icon="menu" />
+          <q-btn flat @click="leftDrawerOpen = !leftDrawerOpen" v-if="!leftDrawerOpen" round dense icon="menu" />
         </q-toolbar-title>
         <div class="row items-center">
           <!-- <q-icon name="assignment" class="q-mr-sm" /> -->
@@ -35,7 +35,7 @@
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen">
-      <q-card class="fit bg-blue-7">
+      <q-card class="fit bg-blue-7 border-r-8 border-blue-300">
         <q-list padding class="rounded-borders text-primary q-pl-sm">
           <span class="text-subtitle1 text-white font-weight-bold"> Home</span>
           <q-item to="/admin/home" :is="$q.platform.is.ssr ? 'div' : 'router-link'" class="text-white" clickable tag="router-link" active-class="my-menu-link" exact-active-class="my-menu-link">
@@ -111,5 +111,6 @@ const lists = ref([
 .my-menu-link {
   background-color: #83bff0; /* Background color for active link */
   color: #1976D2; /* Text color for active link */
+  border-radius: 20px 0 0 20px;
 }
 </style>

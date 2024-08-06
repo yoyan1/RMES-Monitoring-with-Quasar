@@ -94,8 +94,15 @@ const load = ref(false)
 const accept = async (row) => {
   load.value = true
   try{
-    // await cruds.setDocument('students', row.id, row);
-    // await cruds.deleteDocument('requests', row.id);
+    if(row.status == 'new'){
+      await cruds.setDocument('students', row.id, row);
+      await cruds.deleteDocument('requests', row.id);
+    }
+    else{
+      await cruds.updateDocument('students', row.id, row);
+      await cruds.deleteDocument('requests', row.id);
+
+    }
     $q.notify({
       type: 'positive',
       message: 'Successfuly added to students list',

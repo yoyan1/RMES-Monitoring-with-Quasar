@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
+import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { onFileChange, image, file } from 'app/composables/fileHandler';
 import { query, where, collection, onSnapshot, setDoc, doc, getDocs, getDoc, updateDoc } from "firebase/firestore";
@@ -7,20 +8,21 @@ import { db } from 'src/config/firebase';
 import { useCrud } from 'src/stores/crudsStrore';
 import { useStorage } from 'src/stores/storageStore';
 
-const route = useRouter()
-const cruds = useCrud()
-const imageStore = useStorage()
-const step = ref(1)
-const isLoading = ref(false)
-const props = defineProps({
-  student: Object
-})
+const $q = useQuasar();
+const route = useRouter();
+const cruds = useCrud();
+const imageStore = useStorage();
+const step = ref(1);
+const isLoading = ref(false);
 
-const idNumberGenerated = ref({})
-const id = ref()
-// const image = ref(null)
+const props = defineProps({
+  student: Object,
+});
+
+const idNumberGenerated = ref({});
+const id = ref();
 const studentData = ref({
-  student_id: id.value,
+  student_id: '',
   fullname: '',
   gender: '',
   date_of_birth: '',
@@ -35,64 +37,79 @@ const studentData = ref({
   section: '',
   lrn: 0,
   imageUrl: '',
-  status: 'pending',
-})
+  status: 'new',
+});
 
 const completeAddress = computed(() => {
-return studentData.value.street + ', ' + studentData.value.barangay + ', ' +studentData.value.municipality + ', ' + studentData.value.province
-})
+  return `${studentData.value.street}, ${studentData.value.barangay}, ${studentData.value.municipality}, ${studentData.value.province}`;
+});
 
-onMounted(()=>{
-  studentData.value = {...studentData.value, ...props.student}
-})
+onMounted(() => {
+  studentData.value = { ...studentData.value, ...props.student };
+  getNewId();
+});
 
-let newId;
 async function getNewId() {
-    try {
-        const docRef = doc(db, "idGenerator", 'yJf83yJpygmTCj7tg95V');
-        const docSnap = await getDoc(docRef);
+  try {
+    const docRef = doc(db, "idGenerator", 'yJf83yJpygmTCj7tg95V');
+    const docSnap = await getDoc(docRef);
 
-        idNumberGenerated.value = docSnap.data();
-        newId = idNumberGenerated.value.count + 1;
-        id.value = "RMES-SN-000" + newId.toString();
+    idNumberGenerated.value = docSnap.data();
+    const newId = idNumberGenerated.value.count + 1;
+    id.value = `RMES-SN-000${newId}`;
 
-        isLoading.value = false
-    } catch (error) {
-        console.error("error fetching data", error);
-    }
+    isLoading.value = false;
+  } catch (error) {
+    console.error("Error fetching data", error);
+  }
 }
-getNewId()
+
+async function uploadImage() {
+  if (file) {
+    await imageStore.upload('studentsImage/', file);
+    const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', file.name);
+    studentData.value.imageUrl = imageUrl;
+  } else if (!studentData.value.imageUrl) {
+    const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', 'default.jpg');
+    studentData.value.imageUrl = imageUrl;
+    console.log("No file selected");
+  } 
+}
+
 async function onSubmit(e) {
-    isLoading.value = true;
-    if (file) {
-        await imageStore.upload('studentsImage/', file);
-        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', file.name);
-        studentData.value.imageUrl = imageUrl;
+  isLoading.value = true;
+  await uploadImage();
 
-    } else if(!studentData.value.imageUrl){
-        const { imageUrl } = await imageStore.useFirebaseStorage('studentsImage/', 'default.jpg');
-        studentData.value.imageUrl = imageUrl;
-        console.log("no file selected");
+  try {
+    if (!props.student) {
+      studentData.value = { ...studentData.value, ...{ student_id: id.value } };
+      await cruds.setDocument("requests", id.value, studentData.value);
+      await cruds.updateDocument('idGenerator', 'yJf83yJpygmTCj7tg95V', { count: idNumberGenerated.value.count + 1 });
+    } else {
+      studentData.value = { ...studentData.value, ...{ status: 'update' } };
+      await cruds.setDocument("requests", studentData.value.student_id, studentData.value);
     }
 
-    try {
-
-        if(e){
-            studentData.value = { ...studentData.value, ...{ student_id: id.value } };
-            await cruds.setDocument("requests", id.value, studentData.value)
-            // Increment idGenerator
-            await cruds.updateDocument('idGenerator', 'yJf83yJpygmTCj7tg95V', { count: newId })
-            
-        } else{
-            await cruds.updateDocument('students', studentData.value.student_id, studentData.value)
-        }
-    } catch (error) {
-        console.error(error);
-    } finally {
-        isLoading.value = false;
-        route.push('/admin/home')
-    }
+    $q.notify({
+      icon: 'report_problem',
+      color: 'positive',
+      message: 'Successfully added to request! Please wait for admin confirmation',
+      position: 'top',
+    });
+    route.push('/admin/requests');
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      icon: 'report_problem',
+      color: 'negative',
+      message: 'Error! Please try again',
+      position: 'top',
+    });
+  } finally {
+    isLoading.value = false;
+  }
 }
+
 </script>
 <template>
     <q-card class="q-pa-md q-mb-md">
